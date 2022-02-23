@@ -1,0 +1,22 @@
+<IfModule mod_expires.c>
+ 
+    ExpiresActive on
+    ExpiresDefault                                      "access plus 1 month"
+ 
+  
+ 
+  # Media files
+ 
+    ExpiresByType audio/ogg                             "access plus 1 month"
+    ExpiresByType image/apng                            "access plus 1 month"
+    ExpiresByType image/bmp                             "access plus 1 month"
+    ExpiresByType image/gif                             "access plus 1 month"
+    ExpiresByType image/jpeg                            "access plus 1 month"
+    ExpiresByType image/png                             "access plus 1 month"
+    ExpiresByType image/svg+xml                         "access plus 1 month"
+    ExpiresByType image/webp                            "access plus 1 month"
+    ExpiresByType video/mp4                             "access plus 1 month"
+    ExpiresByType video/ogg                             "access plus 1 month"
+    ExpiresByType video/webm                            "access plus 1 month"
+ 
+</IfModule>

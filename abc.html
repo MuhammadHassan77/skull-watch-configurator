@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>3D Configurator by GDH | 3dsium.com</title>
+
+    <style type="text/css">
+        #player {
+            width: 100%;
+            height: 600px;
+            border: 1px solid transparent !important;
+        }
+
+        #codepen {
+            position: fixed;
+            top: 0;
+            right: 0;
+            margin: 5px;
+        }
+
+        #content input {
+            border: 2px solid #566963;
+            font-family: Arial;
+            font-size: 15px;
+            padding: 5px;
+        }
+
+        button,
+        select {
+            box-shadow: inset 0px 1px 3px 0px #91b8b3;
+            background-color: #768d87;
+            border-radius: 5px;
+            border: 1px solid #566963;
+            display: block;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: Arial;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 8px 16px;
+            text-decoration: none;
+            text-shadow: 0px -1px 0px #2b665e;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #6c7c7c;
+        }
+
+        button:active {
+            position: relative;
+            top: 1px;
+        }
+
+        button:disabled {
+            background-color: blue;
+            text-shadow: none;
+            box-shadow: none;
+            border-width: 0px;
+            color: #ccc;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .roundedButton {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            background-size: contain;
+            display: inline-block;
+        }
+
+        .highlight {
+            color: red;
+        }
+
+        hr {
+            clear: left;
+        }
+
+        .roundedImg {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            background-size: contain;
+            display: inline-block;
+            cursor: pointer;
+            margin: 5px;
+            border: 3px solid #566963;
+        }
+
+        .outline {
+            border: 1px solid blue;
+        }
+
+        span
+
+        /* ,svg */
+            {
+            display: none !important;
+        }
+
+        .color-box {
+            cursor: pointer;
+        }
+
+        .circle-cursor--outer {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(237, 28, 36, 0.5);
+            -webkit-border-radius: 30px;
+            -khtml-border-radius: 30px;
+            -moz-border-radius: 30px;
+            -ms-border-radius: 30px;
+            -o-border-radius: 30px;
+            border-radius: 30px;
+            margin-top: -17px;
+            margin-left: -16px;
+            -webkit-transition: all 50ms linear 0ms;
+            -khtml-transition: all 50ms linear 0ms;
+            -moz-transition: all 50ms linear 0ms;
+            -ms-transition: all 50ms linear 0ms;
+            -o-transition: all 50ms linear 0ms;
+            transition: all 50ms linear 0ms;
+        }
+
+        .circle-cursor {
+            position: fixed;
+            top: inherit;
+            left: inherit;
+            pointer-events: none;
+        }
+
+        .circle-cursor--inner {
+            width: 6px;
+            height: 6px;
+            background-color: #ed1c24;
+            -webkit-border-radius: 6px;
+            -khtml-border-radius: 6px;
+            -moz-border-radius: 6px;
+            -ms-border-radius: 6px;
+            -o-border-radius: 6px;
+            border-radius: 6px;
+            margin-top: -5px;
+            margin-left: -4px;
+        }
+
+        .circle-cursor {
+            position: fixed;
+            top: inherit;
+            left: inherit;
+            pointer-events: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body>
+
+    <div id="content" class="col-md-12 container-fluid p-0">
+
+        <div id="player" class="col-md-12 float-left position-fixed" style="z-index: 10000;">
+            <div class="circle-cursor circle-cursor--outer"></div>
+            <div class="circle-cursor circle-cursor--inner"></div>
+        </div>
+        <script src="https://clara.io/js/claraplayer.min.js"></script>
+
+        <!-- <div class="col-md-2 m-auto"> -->
+        <div class="w-100 position-fixed d-flex justify-content-center">
+            <div class="float-left ml-1 color-box"
+                style="background-color: #00a6a6; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#00a6a6"></div>
+            <div class="float-left ml-1 color-box"
+                style="background-color: #ff8400; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#ff8400"></div>
+            <div class="float-left ml-1 color-box"
+                style="background-color: #ea0000; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#ea0000"></div>
+            <div class="float-left ml-1 color-box"
+                style="background-color: #3a69d5; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#3a69d5"></div>
+        </div>
+
+    </div>
+
+
+
+    <script>
+        $(document).ready(() => {
+
+
+            var sceneId = '6f5c5f23-1741-4bf4-a936-82b603f0702f';
+            var api = claraplayer('player');
+            api.sceneIO.fetchAndUse(sceneId);
+            api.on('loaded', function () {
+                console.log('Player is loaded and ready');
+                setTimeout(() => { $("#player").find("a[href='https://threekit.com/']").remove(); }, 100);
+            });
+            // Change Color
+
+            //->hexToRGB(c)  its a separate function to convert hexa color to RGB
+
+            $('.color-box').click(function () {
+                var hex_color = $(this).data('color');
+                material = 'Physical';
+                c = hex_color.replace('#', '0x');
+                color_change = hexToRGB(c)
+
+                api.scene.set({
+                    name: material,
+                    plug: 'Material',
+                    property: 'baseColor'
+                }, {
+                    r: color_change[0] / 255,
+                    g: color_change[1] / 255,
+                    b: color_change[2] / 255
+                });
+
+
+            })
+
+
+            //Color change end
+
+
+            //Convert a hexidecimal color string to 0..255 R,G,B
+
+
+            hexToRGB = function (hex) {
+                var r = hex >> 16;
+                var g = hex >> 8 & 0xFF;
+                var b = hex & 0xFF;
+                return [r, g, b];
+            }
+
+
+            //hexToRGB end
+
+
+
+            var scroll_top;
+            var window_height;
+            var window_width;
+            var scroll_status = '';
+            var lastScrollTop = 0;
+            $(window).on('load', function () {
+                window_width = $(window).width();
+                console.log(window_width);
+                consultio_mouse_move();
+            });
+
+
+            /* ====================
+             Mouse Move
+             ====================== */
+            function consultio_mouse_move() {
+                var follower, init, mouseX, mouseY, positionElement, timer;
+
+                follower = document.getElementById('player');
+
+
+                mouseX = (event) => {
+                    return event.clientX;
+                };
+
+                mouseY = (event) => {
+                    return event.clientY;
+                };
+
+                positionElement = (event) => {
+                    var mouse;
+                    mouse = {
+                        x: mouseX(event),
+                        y: mouseY(event)
+                    };
+
+                    follower.style.top = mouse.y + 'px';
+                    return follower.style.left = mouse.x + 'px';
+                };
+
+                timer = false;
+
+                window.onmousemove = init = (event) => {
+                    var _event;
+                    _event = event;
+                    return timer = setTimeout(() => {
+                        return positionElement(_event);
+                    }, 0);
+                };
+            }
+
+
+
+        })
+
+
+
+
+    </script>
+</body>
+
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/css">
+        #player {
+            width: 100%;
+            height: 600px;
+            border: 1px solid transparent !important;
+        }
+
+        #codepen {
+            position: fixed;
+            top: 0;
+            right: 0;
+            margin: 5px;
+        }
+
+        #content input {
+            border: 2px solid #566963;
+            font-family: Arial;
+            font-size: 15px;
+            padding: 5px;
+        }
+
+        button,
+        select {
+            box-shadow: inset 0px 1px 3px 0px #91b8b3;
+            background-color: #768d87;
+            border-radius: 5px;
+            border: 1px solid #566963;
+            display: block;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: Arial;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 8px 16px;
+            text-decoration: none;
+            text-shadow: 0px -1px 0px #2b665e;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #6c7c7c;
+        }
+
+        button:active {
+            position: relative;
+            top: 1px;
+        }
+
+        button:disabled {
+            background-color: blue;
+            text-shadow: none;
+            box-shadow: none;
+            border-width: 0px;
+            color: #ccc;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .roundedButton {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            background-size: contain;
+            display: inline-block;
+        }
+
+        .highlight {
+            color: red;
+        }
+
+        hr {
+            clear: left;
+        }
+
+        .roundedImg {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            background-size: contain;
+            display: inline-block;
+            cursor: pointer;
+            margin: 5px;
+            border: 3px solid #566963;
+        }
+
+        .outline {
+            border: 1px solid blue;
+        }
+
+        span,
+        svg {
+            display: none !important;
+        }
+
+        .color-box {
+            cursor: pointer;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+
+
+</head>
+
+<body>
+    
+    <div id="content" class="col-md-12 container-fluid p-0">
+
+        <div id="player" class="col-md-12 float-left"></div>
+        <script src="https://clara.io/js/claraplayer.min.js"></script>
+        <script>
+            var sceneId = '6f5c5f23-1741-4bf4-a936-82b603f0702f';
+            var api = claraplayer('player');
+            api.sceneIO.fetchAndUse(sceneId);
+            api.on('loaded', function () {
+                console.log('Player is loaded and ready');
+
+            });
+            // Fetch and initialize the sceneId
+            // clara.sceneIO.fetchAndUse(model_id);
+        </script>
+
+        <div class="w-100 position-fixed d-flex justify-content-center">
+            <div class="float-left ml-1 color-box"
+                style="background-color: #00a6a6; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#00a6a6">c</div>
+            <div class="float-left ml-1 color-box"
+                style="background-color: #ff8400; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#ff8400">c</div>
+            <div class="float-left ml-1 color-box"
+                style="background-color: #ea0000; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#ea0000">c</div>
+            <div class="float-left ml-1 color-box"
+                style="background-color: #3a69d5; height: 25px; width: 25px; color: transparent; border-radius:50px; margin-top: 20px;"
+                data-color="#3a69d5">c</div>
+        </div>
+
+
+    </div>
+
+
+    <script>
+        // var sceneId = '6f5c5f23-1741-4bf4-a936-82b603f0702f';
+        // var api = claraplayer('player');
+        // api.sceneIO.fetchAndUse(sceneId);
+        // api.on('loaded', function () {
+        //     console.log('Player is loaded and ready');
+
+        // });
+        //Change Color
+
+        //->hexToRGB(c)  its a separate function to convert hexa color to RGB
+
+        $('.color-box').click(function () {
+            var hex_color = $(this).data('color');
+            material = 'Physical';
+            c = hex_color.replace('#', '0x');
+            color_change = hexToRGB(c)
+
+            api.scene.set({
+                name: material,
+                plug: 'Material',
+                property: 'baseColor'
+            }, {
+                r: color_change[0] / 255,
+                g: color_change[1] / 255,
+                b: color_change[2] / 255
+            });
+
+
+        })
+
+
+        //Color change end
+
+
+        //Convert a hexidecimal color string to 0..255 R,G,B
+
+
+        hexToRGB = function (hex) {
+            var r = hex >> 16;
+            var g = hex >> 8 & 0xFF;
+            var b = hex & 0xFF;
+            return [r, g, b];
+        }
+
+
+    //hexToRGB end
+    </script>
+</body>
+
+</html> -->
